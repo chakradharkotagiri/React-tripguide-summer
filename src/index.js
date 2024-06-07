@@ -1,5 +1,5 @@
 import React from "react";
-import reactRouterDom from "react-router-dom";
+import ReactDOM from "react-router-dom";
 
 import './App'
 
