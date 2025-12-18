@@ -20,21 +20,22 @@ const ImageUpload = (props) => {
     fileReader.readAsDataURL(file);
   }, [file]);
 
-  const pickedHandler = (event) => {
-    let pickedFile;
-    let fileIsValid = isValid;
-    if (event.target.files && event.target.files.length == 1) {
-      pickedFile = event.target.files[0];
-      setFile(pickedFile);
-      setIsValid(true);
-      fileIsValid = true;
-    } else {
-      setIsValid(false);
-      fileIsValid = false;
-    }
-    console.log("Image Input",props.id, pickedFile, fileIsValid);
-    props.onInput(props.id, pickedFile, fileIsValid);
-  };
+ const pickedHandler = (event) => {
+  let pickedFile;
+  let fileIsValid = false;
+
+  if (event.target.files && event.target.files.length === 1) {
+    pickedFile = event.target.files[0];
+    setFile(pickedFile);
+    setIsValid(true);
+    fileIsValid = true;
+  } else {
+    setIsValid(false);
+  }
+
+  props.onInput(props.id, pickedFile, fileIsValid);
+};
+
   const pickImageHandler = () => {
     filePickerRef.current.click();
   };

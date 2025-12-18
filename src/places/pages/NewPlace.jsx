@@ -40,22 +40,53 @@ const NewPlace = () => {
     },
     false
   );
- 
 
+  const uploadImageToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "unsigned_users");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/Tripguide/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+    return data.secure_url;
+  };
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
+
     try {
-      const formData = new FormData();
+      // 1️⃣ Upload image to Cloudinary
+      const imageUrl = await uploadImageToCloudinary(
+        formState.inputs.image.value
+      );
 
-      formData.append("title", formState.inputs.title.value);
-      console.log(formState)
-      formData.append("description", formState.inputs.description.value);
-      formData.append("address", formState.inputs.address.value);
-      formData.append("image", formState.inputs.image.value);
-      formData.append("creator", auth.userId);
+      if (!imageUrl) {
+        throw new Error("Image upload failed");
+      }
 
-      await sendRequest(import.meta.env.VITE_BACKEND_URL + "/places", "POST", formData,{'authorization':`Bearer ${auth.token}`});
+      await sendRequest(
+        import.meta.env.VITE_BACKEND_URL + "/places",
+        "POST",
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+          address: formState.inputs.address.value,
+          image: imageUrl,
+          creator: auth.userId,
+        }),
+        {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${auth.token}`,
+        }
+      );
+
       history.push("/");
     } catch (err) {}
   };
