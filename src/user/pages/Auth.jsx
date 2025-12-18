@@ -34,9 +34,37 @@ const Auth = () => {
     false
   );
 
+  /* ============================
+     CLOUDINARY UPLOAD (PROFILE)
+  ============================ */
+  const uploadImageToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "frontend_unsigned");
+
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dmdrtetyn/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text);
+    }
+
+    const data = await res.json();
+    return data.secure_url;
+  };
+
+  /* ============================
+     SWITCH LOGIN / SIGNUP
+  ============================ */
   const switchModeHandler = () => {
     if (!isLoginMode) {
-      // Switch to Login
+      // Switch to LOGIN
       setFormData(
         {
           email: formState.inputs.email,
@@ -46,7 +74,7 @@ const Auth = () => {
           formState.inputs.password.isValid
       );
     } else {
-      // Switch to Signup
+      // Switch to SIGNUP
       setFormData(
         {
           ...formState.inputs,
@@ -59,9 +87,13 @@ const Auth = () => {
     setIsLoginMode((prev) => !prev);
   };
 
+  /* ============================
+     SUBMIT HANDLER
+  ============================ */
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
+    // LOGIN
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -76,18 +108,27 @@ const Auth = () => {
 
         auth.login(responseData.userId, responseData.token);
       } catch (err) {}
-    } else {
-      try {
-        const formData = new FormData();
-        formData.append("name", formState.inputs.name.value);
-        formData.append("email", formState.inputs.email.value);
-        formData.append("password", formState.inputs.password.value);
-        formData.append("image", formState.inputs.image.value);
+    }
 
+    // SIGNUP
+    else {
+      try {
+        // 1️⃣ Upload profile image to Cloudinary
+        const imageUrl = await uploadImageToCloudinary(
+          formState.inputs.image.value
+        );
+
+        // 2️⃣ Send JSON to backend
         const responseData = await sendRequest(
           `${import.meta.env.VITE_BACKEND_URL}/users/signup`,
           "POST",
-          formData
+          JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+            image: imageUrl, // ✅ Cloudinary URL
+          }),
+          { "Content-Type": "application/json" }
         );
 
         auth.login(responseData.userId, responseData.token);
@@ -103,13 +144,11 @@ const Auth = () => {
         {isLoading && <LoadingSpinner asOverlay />}
 
         <h2 className="auth-title">
-          {isLoginMode ? "Welcome Back " : "Create an Account "}
+          {isLoginMode ? "Welcome Back" : "Create an Account"}
         </h2>
 
         <p className="auth-subtitle">
-          {isLoginMode
-            ? "Login to continue"
-            : "Sign up to get started"}
+          {isLoginMode ? "Login to continue" : "Sign up to get started"}
         </p>
 
         <hr />
@@ -133,7 +172,7 @@ const Auth = () => {
               id="image"
               center
               onInput={inputHandler}
-              errorText="Please provide an image."
+              errorText="Please provide a profile image."
             />
           )}
 

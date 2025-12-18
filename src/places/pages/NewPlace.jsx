@@ -5,38 +5,32 @@ import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import Card from "../../shared/components/UIElements/Card";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+
 import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { Authcontext } from "../../shared/components/context/auth-context";
-import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
+
 import "./PlaceForm.css";
 
 const NewPlace = () => {
   const auth = useContext(Authcontext);
+  const history = useHistory();
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [formState, InputHandler] = useForm(
+
+  const [formState, inputHandler] = useForm(
     {
-      title: {
-        value: "",
-        isValid: false,
-      },
-      description: {
-        value: "",
-        isValid: false,
-      },
-      address: {
-        value: "",
-        isValid: false,
-      },
-      image: {
-        value: null,
-        isValid: false,
-      },
+      title: { value: "", isValid: false },
+      description: { value: "", isValid: false },
+      address: { value: "", isValid: false },
+      image: { value: null, isValid: false },
     },
     false
   );
@@ -62,17 +56,12 @@ const NewPlace = () => {
     event.preventDefault();
 
     try {
-      // 1️⃣ Upload image to Cloudinary
       const imageUrl = await uploadImageToCloudinary(
         formState.inputs.image.value
       );
 
-      if (!imageUrl) {
-        throw new Error("Image upload failed");
-      }
-
       await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + "/places",
+        `${import.meta.env.VITE_BACKEND_URL}/places`,
         "POST",
         JSON.stringify({
           title: formState.inputs.title.value,
@@ -83,7 +72,7 @@ const NewPlace = () => {
         }),
         {
           "Content-Type": "application/json",
-          authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         }
       );
 
@@ -92,53 +81,63 @@ const NewPlace = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <ErrorModal error={error} onClear={clearError} />
-      <form className="place-form border-black" onSubmit={placeSubmitHandler}>
+
+      <Card className="place-card">
         {isLoading && <LoadingSpinner asOverlay />}
-        <Input
-          id="title"
-          className="border"
-          element="input"
-          type="text"
-          label="Title"
-          placeholder="Enter your title"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="please enter a valid title"
-          onInput={InputHandler}
-        />
-        <Input
-          id="description"
-          className="border-4 border-gray-950 px-10	"
-          element="textarea"
-          type="text"
-          label="Description"
-          placeholder="Enter your title"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="please enter a valid description (5char)"
-          onInput={InputHandler}
-        />
-        <Input
-          id="address"
-          className="border-4 border-gray-950	"
-          element="input"
-          type="text"
-          label="Address"
-          placeholder="Enter your title"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="please enter a valid address"
-          onInput={InputHandler}
-        />
-        <ImageUpload
-          id="image"
-          onInput={InputHandler}
-          errorText="Please provide an image"
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          ADD PLACE
-        </Button>
-      </form>
-    </React.Fragment>
+
+        <h2 className="place-title">Add a New Place</h2>
+        <p className="place-subtitle">
+          Share a beautiful place you’ve discovered
+        </p>
+
+        <form className="place-form" onSubmit={placeSubmitHandler}>
+          <Input
+            id="title"
+            element="input"
+            type="text"
+            label="Title"
+            placeholder="Enter place title"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid title."
+            onInput={inputHandler}
+          />
+
+          <Input
+            id="description"
+            element="textarea"
+            label="Description"
+            placeholder="Describe the place"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Description should be at least 5 characters."
+            onInput={inputHandler}
+          />
+
+          <Input
+            id="address"
+            element="input"
+            type="text"
+            label="Address"
+            placeholder="Enter address"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid address."
+            onInput={inputHandler}
+          />
+
+          <ImageUpload
+            id="image"
+            center
+            onInput={inputHandler}
+            errorText="Please provide an image."
+          />
+
+          <Button type="submit" disabled={!formState.isValid}>
+            ADD PLACE
+          </Button>
+        </form>
+      </Card>
+    </>
   );
 };
 

@@ -1,24 +1,50 @@
-.place-form {
-    position: relative;
-    list-style: none;
-    margin: 0 auto;
-    padding: 1rem;
-    width: 100%;
-    max-width: 40rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-    border-radius: 6px;
-    background: white;
-    border: 2px;
-    border-color: black;
-  }
-  .place-form input{
-    width: 100%;
-    padding: 0.5rem;
-    border: black;
-    border: 2px;
-    
-  }
+.place-card {
+  max-width: 40rem;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
 
-  .border{
-    border: 2px solid black;
-  }
+.place-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #1f2937;
+}
+
+.place-subtitle {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.place-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Input polish (works with your Input component) */
+.place-form input,
+.place-form textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.place-form input:focus,
+.place-form textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* Button spacing */
+.place-form button {
+  margin-top: 0.5rem;
+}
