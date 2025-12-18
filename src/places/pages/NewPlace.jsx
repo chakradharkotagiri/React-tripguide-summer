@@ -47,7 +47,7 @@ const NewPlace = () => {
     formData.append("upload_preset", "unsigned_users");
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/Tripguide/image/upload",
+      "https://api.cloudinary.com/v1_1/dmdrtetyn/image/upload",
       {
         method: "POST",
         body: formData,
