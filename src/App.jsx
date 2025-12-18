@@ -47,7 +47,7 @@ const App = () => {
           <UserPlaces />
         </Route>
         <Route path="/auth">
-          <Auth />
+          < Auth />
         </Route>
         <Redirect to="/auth" />
       </Switch>

@@ -31,6 +31,7 @@ const Users = () => {
         <ErrorModal error={error} onClear={clearError} />
         {isLoading && (
             <div className="center">
+
                 <LoadingSpinner />
             </div>
             )}
@@ -40,3 +41,5 @@ const Users = () => {
 };
 
 export default Users;
+
+//cpp practice 

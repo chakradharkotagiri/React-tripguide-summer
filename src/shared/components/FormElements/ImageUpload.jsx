@@ -32,7 +32,7 @@ const ImageUpload = (props) => {
       setIsValid(false);
       fileIsValid = false;
     }
-    console.log("Image INput",props.id, pickedFile, fileIsValid);
+    console.log("Image Input",props.id, pickedFile, fileIsValid);
     props.onInput(props.id, pickedFile, fileIsValid);
   };
   const pickImageHandler = () => {

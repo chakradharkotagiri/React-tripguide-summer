@@ -1,67 +1,62 @@
 import React, { useState, useContext } from "react";
+
 import Button from "../../shared/components/FormElements/Button";
-import "./Auth.css";
 import Input from "../../shared/components/FormElements/Input";
-import Card from "../../shared/components/UIElements/Card";
-import { Authcontext } from "../../shared/components/context/auth-context"; // Corrected case
-import { useForm } from "../../shared/hooks/form-hook";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+
+import Card from "../../shared/components/UIElements/Card";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+
+import { Authcontext } from "../../shared/components/context/auth-context";
+import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 
-const Auth = () => {
-  const auth = useContext(Authcontext); // Corrected case
+import "./Auth.css";
 
+const Auth = () => {
+  const auth = useContext(Authcontext);
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [formState, inputHandler, setFormData] = useForm(
     {
-      email: {
-        value: "",
-        isValid: false,
-      },
-      password: {
-        value: "",
-        isValid: false,
-      },
+      email: { value: "", isValid: false },
+      password: { value: "", isValid: false },
     },
     false
   );
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
+      // Switch to Login
       setFormData(
         {
-          ...formState.inputs,
-          name: undefined,
-          image: undefined,
+          email: formState.inputs.email,
+          password: formState.inputs.password,
         },
-        formState.inputs.email.isValid && formState.inputs.password.isValid
+        formState.inputs.email.isValid &&
+          formState.inputs.password.isValid
       );
     } else {
+      // Switch to Signup
       setFormData(
         {
           ...formState.inputs,
-          name: {
-            value: "",
-            isValid: false,
-          },
-          image: {
-            value: null,
-            isValid: false,
-          },
+          name: { value: "", isValid: false },
+          image: { value: null, isValid: false },
         },
         false
       );
     }
-    setIsLoginMode((prevMode) => !prevMode);
+    setIsLoginMode((prev) => !prev);
   };
 
   const authSubmitHandler = async (event) => {
@@ -70,98 +65,118 @@ const Auth = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL + "/users/login",
+          `${import.meta.env.VITE_BACKEND_URL}/users/login`,
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-          {
-            "Content-Type": "application/json",
-          }
+          { "Content-Type": "application/json" }
         );
-        auth.login(responseData.userId , responseData.token);
-      } catch (err) {
-        console.log(err);
-      }
+
+        auth.login(responseData.userId, responseData.token);
+      } catch (err) {}
     } else {
-      console.log("submission", formState.inputs.image);
       try {
         const formData = new FormData();
         formData.append("name", formState.inputs.name.value);
         formData.append("email", formState.inputs.email.value);
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
+
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL + "/users/signup",
+          `${import.meta.env.VITE_BACKEND_URL}/users/signup`,
           "POST",
           formData
         );
 
         auth.login(responseData.userId, responseData.token);
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     }
   };
 
   return (
-    <React.Fragment>
+    <>
       <ErrorModal error={error} onClear={clearError} />
+
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
-        <h2>Login</h2>
+
+        <h2 className="auth-title">
+          {isLoginMode ? "Welcome Back " : "Create an Account "}
+        </h2>
+
+        <p className="auth-subtitle">
+          {isLoginMode
+            ? "Login to continue"
+            : "Sign up to get started"}
+        </p>
+
         <hr />
-        <form onSubmit={authSubmitHandler}>
+
+        <form className="auth-form" onSubmit={authSubmitHandler}>
           {!isLoginMode && (
             <Input
               element="input"
               id="name"
               type="text"
-              placeholder="your name"
               label="Your Name"
-              validators={[VALIDATOR_REQUIRE()]} // Use validators here
+              placeholder="Enter your name"
+              validators={[VALIDATOR_REQUIRE()]}
               errorText="Please enter a valid name."
               onInput={inputHandler}
             />
           )}
+
           {!isLoginMode && (
             <ImageUpload
-              center
               id="image"
+              center
               onInput={inputHandler}
-              errorText="Please provide and image "
+              errorText="Please provide an image."
             />
           )}
+
           <Input
             element="input"
             id="email"
             type="email"
-            placeholder="Email"
             label="E-Mail"
-            validators={[VALIDATOR_EMAIL()]} // Use validators here
-            errorText="Please enter a valid email address."
+            placeholder="Enter your email"
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Please enter a valid email."
             onInput={inputHandler}
           />
+
           <Input
             element="input"
             id="password"
             type="password"
-            placeholder="password"
             label="Password"
-            validators={[VALIDATOR_MINLENGTH(6)]} // Use validators here
-            errorText="Please enter a valid password, at least 6 characters."
+            placeholder="Enter your password"
+            validators={[VALIDATOR_MINLENGTH(6)]}
+            errorText="Password must be at least 6 characters."
             onInput={inputHandler}
           />
+
           <Button type="submit" disabled={!formState.isValid}>
-            {isLoginMode ? "LOGIN" : "SIGNUP"}
+            {isLoginMode ? "LOGIN" : "SIGN UP"}
           </Button>
         </form>
-        <Button inverse onClick={switchModeHandler}>
-          SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
-        </Button>
+
+        <div className="auth-switch">
+          <span>
+            {isLoginMode
+              ? "Don't have an account?"
+              : "Already have an account?"}
+          </span>
+
+          <Button inverse onClick={switchModeHandler}>
+            {isLoginMode ? "SIGN UP" : "LOGIN"}
+          </Button>
+        </div>
       </Card>
-    </React.Fragment>
+    </>
   );
 };
 

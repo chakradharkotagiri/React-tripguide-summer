@@ -6,7 +6,7 @@ const inputReducer = (state, action) => {
   switch (action.type) {
     case "CHANGE":
       return {
-        ...state, //state basically breaks your array elements in to single elements 
+        ...state,
         value: action.val,
         isValid: validate(action.val, action.validators),
       };

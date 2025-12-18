@@ -26,14 +26,14 @@ export const useHttpClient = () => {
         );
 
         if (!response.ok) {
-          console.error('Error response from API:', responseData);
+          console.error("Error response from API:", responseData);
           throw new Error(responseData.message || "Failed to fetch");
         }
 
         setIsLoading(false);
         return responseData;
       } catch (err) {
-        console.log(err)
+        console.log(err);
         if (err.name === "AbortError") {
           // Request was aborted, no need to set an error
           console.log("Request was aborted");

@@ -1,0 +1,113 @@
+.authentication {
+    width: 100%;
+    max-width: 420px;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    text-align: center;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  }
+  
+  .auth-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #1a1a1a;
+  }
+  
+  .auth-subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  .authentication hr {
+    border: none;
+    height: 1px;
+    background: #eee;
+    margin: 1.5rem 0;
+  }
+  
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .auth-form button {
+    margin-top: 1rem;
+  }
+  
+  .auth-switch {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  
+  .auth-switch span {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  /* Responsive */
+  @media (max-width: 480px) {
+    .authentication {
+      margin: 2rem 1rem;
+      padding: 2rem 1.5rem;
+    }
+  
+    .auth-title {
+      font-size: 1.5rem;
+    }
+  }
+  
+.authentication input,
+.authentication textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;          /* Basic border */
+  border-radius: 6px;
+  background: #fff;
+  color: #222;
+  outline: none;                   /* Remove blue outline */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus state */
+.authentication input:focus,
+.authentication textarea:focus {
+  border-color: #4f46e5;            /* Indigo / SaaS-like */
+  box-shadow: none;                 /* No glow */
+}
+
+/* Placeholder */
+.authentication input::placeholder,
+.authentication textarea::placeholder {
+  color: #999;
+}
+
+/* Label spacing (if your Input component uses <label>) */
+.authentication label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  color: #444;
+}
+
+/* Invalid input (your Input component usually adds this class) */
+.authentication .form-control--invalid input,
+.authentication .form-control--invalid textarea {
+  border-color: #dc2626;
+  background: #fff5f5;
+}
+
+/* Error text */
+.authentication .form-control--invalid p {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}

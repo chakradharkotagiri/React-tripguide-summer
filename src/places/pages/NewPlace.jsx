@@ -40,8 +40,7 @@ const NewPlace = () => {
     },
     false
   );
-  const history = useHistory();
-
+ 
 
 
   const placeSubmitHandler = async (event) => {
