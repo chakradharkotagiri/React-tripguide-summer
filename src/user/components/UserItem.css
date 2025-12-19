@@ -31,6 +31,7 @@
     width: 4rem;
     height: 4rem;
     margin-right: 1rem;
+    object-fit: cover;
   }
   
   .user-item__info h2 {
